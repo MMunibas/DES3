@@ -1,0 +1,143 @@
+* Based in input of Maryam and Luis
+* Heating and Equilibrium Run
+*
+
+bomlev -1
+prnlev 5
+wrnlev 1
+
+!#########################################
+! Tasks
+!#########################################
+
+! Start Production at dcd number n
+set ndcd 0
+
+!#########################################
+! Setup System
+!#########################################
+
+! Read topology and parameter files
+stream toppar.str
+
+! Read PSF
+open read unit 10 card name step1.psf
+read psf  unit 10 card xplor
+
+!Read Coordinate
+open read unit 10 card name step1.crd
+read coor unit 10 card
+
+!#########################################
+! Setup PBC (Periodic Boundary Condition)
+!#########################################
+
+coor stat sele all end
+
+calc xdim = int ( ( ?xmax - ?xmin + 0.0 ) ) + 1
+calc ydim = int ( ( ?ymax - ?ymin + 0.0 ) ) + 1
+calc zdim = int ( ( ?zmax - ?zmin + 0.0 ) ) + 1
+
+set bsiz = 0
+
+if @xdim .gt. @bsiz then
+   set bsiz = @xdim
+endif
+if @ydim .gt. @bsiz then
+   set bsiz = @ydim
+endif
+if @zdim .gt. @bsiz then
+   set bsiz = @zdim
+endif
+
+open read unit 10 card name crystal_image.str
+crystal defi cubic @bsiz @bsiz @bsiz 90. 90. 90.
+crystal build nope 0
+image byres xcen 0.0 ycen 0.0 zcen 0.0 sele all end
+
+!#########################################
+! Bonded/Non-bonded Options & Constraints
+!#########################################
+
+! Electrostatic FDCM model
+OPEN UNIT 40 CARD READ NAME scn_fluc.dcm
+DCM FLUX 99 IUDCM 40 TSHIFT
+CLOSE UNIT 40
+
+! Non-bonding parameters
+nbonds atom ewald pmewald kappa 0.43  -
+  fftx 32 ffty 32 fftz 32 order 4 -
+  cutnb 14.0  ctofnb 12.0 ctonnb 10.0 -
+  lrc vdw vswitch -
+  inbfrq -1 imgfrq -1
+
+! Constrains
+shake bonh para sele all end
+
+!#########################################
+! NVT Production
+!#########################################
+
+scalar mass stat
+calc pmass = int ( ?stot  /  50.0 )
+calc tmass = @pmass * 10
+
+! Initial NVT sample runs
+set m LLL
+open read unit 33 card name dyna.@m.res    ! Old restart file
+dyna restart leap nstep 1 timestp 0.0010 -
+  nprint 100 ntrfrq 100 -
+  iprfrq 100 inbfrq -1 imgfrq 50 ixtfrq 1000 -
+  ihtfrq 0 ieqfrq 0 -
+  IUNREA 33 IUNWRI -1
+close unit 33
+close unit 34
+
+open write unit 34 card name nvt.start.res ! New restart file
+dyna cpt start leap nstep 1000 timestp SSS -
+  nprint 100 nsavc 10 ntrfrq 200 -
+  iprfrq 1000 inbfrq -1 imgfrq 50 ixtfrq 1000 -
+  ihtfrq 0 ieqfrq 0 ISVFRQ 1000 IASORS 1 IASVEL 0 -
+  IUNREA -1 IUNWRI 34 IUNCRD -1 IUNVEL -1 -
+  pconstant pmass 0 -
+  hoover reft XXX tmass @tmass
+
+label loop
+
+if @ndcd .eq. 0 then
+  open read unit 33 card name nvt.start.res  ! Old restart file
+  open write unit 34 card name nvt.@ndcd.res ! New Restart file
+  open write unit 35 file name nvt.@ndcd.dcd ! Coordinates file
+  open write unit 36 card name str.@ndcd.dat ! Stress tensor
+else
+  calc m @ndcd-1
+  open read unit 33 card name nvt.@m.res
+  open write unit 34 card name nvt.@ndcd.res
+  open write unit 35 file name nvt.@ndcd.dcd
+  open write unit 36 card name str.@ndcd.dat
+endif
+
+dyna cpt restart leap res nstep TTT3 timestp SSS -
+  nprint 100 nsavc NSV ntrfrq 200 -
+  iprfrq 1000 inbfrq -1 imgfrq 50 ixtfrq 1000 -
+  ihtfrq 0 ieqfrq 0 -
+  IUNREA 33 IUNWRI 34 IUNCRD 35 IUNVEL -1 -
+  pconstant pmass 0 iupten 36 iptfrq NSP -
+  hoover reft XXX tmass @tmass 
+
+open unit 1 write card name nvt.@ndcd.crd
+write coor card unit 1
+close unit 1
+
+open write unit 10 card name nvt.@ndcd.pdb
+write coor unit 10 pdb
+
+close unit 33
+close unit 34
+close unit 35
+close unit 36
+
+increase ndcd by 1
+if ndcd lt NNN goto loop
+
+STOP
