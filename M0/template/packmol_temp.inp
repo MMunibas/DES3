@@ -1,0 +1,5 @@
+tolerance 2.0
+seed RRR
+output init.pdb               
+filetype pdb
+SSS
