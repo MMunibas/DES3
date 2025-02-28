@@ -1,0 +1,44 @@
+* Parameters for halobenzenes
+* Bonded interactions from Jorgensen and Schyman, JCTC (2012) 8
+*
+
+ATOMS
+MASS   800  POT      39.102000    ! k Potassium Ion! check masses
+MASS   801  CKSCN    12.01100     ! C for cyano group
+MASS   802  NKSCN    14.00700     ! N for cyano group
+MASS   803  SKSCN    32.06000     ! sulphur, SH, -S-
+MASS     4  HT        1.00800 H ! TIPS3P WATER HYDROGEN
+MASS    75  OT       15.99940 O ! TIPS3P WATER OXYGEN
+MASS    77  OT4      15.99940 O ! TIP4P WATER OXYGEN
+MASS    78  HTP      1.008    H ! TIPnP (and TIP4P-Ewal, TIP4P-2005)
+MASS   113  LP      0.0       H ! general lonepair
+
+BONDS
+CKSCN  NKSCN   000.000     1.1800 ! 1053.00     1.1800 ! ACN, acetonitrile; 3CYP, 3-Cyanopyridine (PYRIDINE pyr-CN) (MP2 by kevo)
+CKSCN  SKSCN   000.000     1.6700 ! 400.000     1.6700 ! Molecu , from CG1N1 CG331, PENALTY= 446
+OT  HT  450.0 0.9572 ! ALLOW WAT
+HT  HT    0.0 1.5139 ! ALLOW WAT
+HTP   HTP      0.0       1.5139  ! from TIP4P  geometry (for SHAKE w/PARAM)
+HTP   OT4    450.0       0.9572  ! from TIP4P  geometry
+OT4   LP       0.0       0.15    ! from TIP4P  geometry
+
+ANGLES
+SKSCN  CKSCN  NKSCN    00.00    179.99 ! 21.20    169.95 ! Molecu , from CG331 CG1N1 NG1T1, PENALTY= 113.9
+HT  OT  HT   55.0 104.52 ! ALLOW WAT
+HTP  OT4  HTP    55.0      104.52   ! FROM TIP4P  GEOMETRY
+
+DIHEDRALS
+
+IMPROPERS
+
+NONBONDED
+SKSCN    0.0       -0.11176    2.6992 ! Cluster Fit
+NKSCN    0.0       -0.00372    2.5194 ! RMSE = 16.60589 kcal/mol
+CKSCN    0.0       -0.00010    1.5893 ! 
+POT      0.0       -0.1004    1.86890 ! Bian et al., 10.1021/jp4016646
+OT     0.00  -0.1521  1.7682 ! ALLOW   WAT
+HT     0.00  -0.0460  0.2245 ! ALLOW WAT
+HTP      0.0       -0.0       0.0
+OT4      0.0       -0.155     1.7699
+
+

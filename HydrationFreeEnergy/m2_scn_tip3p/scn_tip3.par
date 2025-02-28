@@ -1,0 +1,35 @@
+* Parameters for halobenzenes
+* Bonded interactions from Jorgensen and Schyman, JCTC (2012) 8
+*
+
+ATOMS
+MASS   800  POT      39.102000    ! k Potassium Ion! check masses
+MASS   801  CKSCN    12.01100     ! C for cyano group
+MASS   802  NKSCN    14.00700     ! N for cyano group
+MASS   803  SKSCN    32.06000     ! sulphur, SH, -S-
+MASS     4  HT        1.00800 H ! TIPS3P WATER HYDROGEN
+MASS    75  OT       15.99940 O ! TIPS3P WATER OXYGEN
+
+BONDS
+CKSCN  NKSCN   000.000     1.1800 ! 1053.00     1.1800 ! ACN, acetonitrile; 3CYP, 3-Cyanopyridine (PYRIDINE pyr-CN) (MP2 by kevo)
+CKSCN  SKSCN   000.000     1.6700 ! 400.000     1.6700 ! Molecu , from CG1N1 CG331, PENALTY= 446
+OT  HT  450.0 0.9572 ! ALLOW WAT
+HT  HT    0.0 1.5139 ! ALLOW WAT
+
+ANGLES
+SKSCN  CKSCN  NKSCN    00.00    179.99 ! 21.20    169.95 ! Molecu , from CG331 CG1N1 NG1T1, PENALTY= 113.9
+HT  OT  HT   55.0 104.52 ! ALLOW WAT
+
+DIHEDRALS
+
+IMPROPERS
+
+NONBONDED
+SKSCN    0.0       -0.18359    2.4279 ! Cluster Fit, RMSE 15.562 kcal/mol
+NKSCN    0.0       -0.02226    2.2860 ! exppol_SCN_Kbian
+CKSCN    0.0       -0.00010    1.8934 ! 
+POT      0.0       -0.1004    1.86890 ! Bian et al., 10.1021/jp4016646
+OT     0.00  -0.1521  1.7682 ! ALLOW   WAT
+HT     0.00  -0.0460  0.2245 ! ALLOW WAT
+
+
