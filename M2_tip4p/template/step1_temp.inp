@@ -1,0 +1,62 @@
+* STEP 1 INPUT FILE FOR COMPOSITION INITIALIZATION 
+* KAI TOEPFER, 09.03.2022
+*
+
+DIMENS CHSIZE 3000000 MAXRES 3000000
+
+prnlev 5
+bomlev -1
+
+! Read topology and parameter files
+stream toppar.str
+
+SSS
+
+!
+! Setup PBC (Periodic Boundary Condition)
+!
+
+coor stat sele all end
+
+calc xdim = int ( ( ?xmax - ?xmin + 0.0 ) ) + 1
+calc ydim = int ( ( ?ymax - ?ymin + 0.0 ) ) + 1
+calc zdim = int ( ( ?zmax - ?zmin + 0.0 ) ) + 1
+
+
+set bsiz = 0
+if @xdim .gt. @bsiz then
+   set bsiz = @xdim
+endif
+
+if @ydim .gt. @bsiz then
+   set bsiz = @ydim
+endif
+
+if @zdim .gt. @bsiz then
+   set bsiz = @zdim
+endif
+
+
+open read unit 10 card name crystal_image.str
+crystal defi cubic @bsiz @bsiz @bsiz 90. 90. 90.
+crystal build nope 0
+image byres xcen 0.0 ycen 0.0 zcen 0.0 sele all end
+
+
+
+
+open write card unit 10 name step1.pdb
+write coor pdb  unit 10 official
+
+open write card unit 10 name step1.crd
+write coor unit 10 card
+
+open write unit 10 card name step1.psf
+write psf  unit 10 card
+
+
+
+stop
+
+
+

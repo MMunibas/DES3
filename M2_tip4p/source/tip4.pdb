@@ -1,0 +1,8 @@
+REMARK  EQUILIBRATED WATER                                                            
+REMARK   DATE:     8/20/19     17:37: 2      CREATED BY USER: meuwly                  
+ATOM      1  OH2 TIP4    1       9.120 -14.533   2.813  1.00  0.00      WAT 
+ATOM      2  OM  TIP4    1       9.022 -14.572   2.920  1.00  0.00      WAT 
+ATOM      3  H1  TIP4    1       8.633 -13.953   3.398  1.00  0.00      WAT 
+ATOM      4  H2  TIP4    1       8.845 -15.414   3.067  1.00  0.00      WAT
+TER       5      TIP4    1
+END
